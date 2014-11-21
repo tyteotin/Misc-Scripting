@@ -1,0 +1,39 @@
+#!/bin/bash
+
+sed -e '0,/<hr/!d' hwnwdseng.htm > o1
+sed '/<head/d; /<\/head/d' o1 > o2
+sed '/<strong/d; /<\/strong/d' o2 > o3
+sed '/<meta/d; /<title/d' o3 > o4
+sed '/<link/d; /<hr/d' o4 > o5
+sed '/<body/d; /<\/body/d' o5 > o6
+sed '/<table/d; /<\/table/d' o6 > o7
+sed '/<div/d ; /<\/div/d' o7 > o8
+sed '/<font/d; /<\/font/d' o8 > o9
+sed '/html/d; /HTML/d' o9 > o10
+tr -cs 'A-Za-z' < o10 > temp10
+tr A-Z a-z < temp10 > temp10a
+sed 's/<u>a<\/u>/a/g' temp10a > o9
+sed 's/<u>e<\/u>/e/g' o9 > o8
+sed 's/<u>o<\/u>/o/g' o8 > o7
+sed 's/<u>i<\/u>/i/g' o7 > o6
+
+sed -e 's/`/78/g' o6 > o5
+sed -e "s|78|\'|g" o5 > o4
+
+tr -d '\r\n' < o4 > o5
+sed 's/<tr>/\n/g' o5 > o6
+sed 's/^/testing/' o6 > temp6
+sed 's/<\/td>/<\/td>\n/g' temp6 > temp7
+
+sed '/testing/d' temp7 > temp8
+grep -e '<td>' < temp8 > temp9
+sed 's/<td>//g' temp9 > temp10
+sed 's/<\/td>//g' temp10 > temp11
+sed -r 's/,./\n/' temp11 > temp12
+sed '/\?/d; /-/d' temp12 > temp13
+sed 's/\s/7/g' temp13 > temp14
+sed 's/7/7\n/g' temp14 > temp15
+sed 's/7//g' temp15 > temp16
+tr -cs 'A-Za-z' < temp16 > temp17
+sort -u temp17 > temp18
+sed -e '/^$/ d' < temp18 > hwords

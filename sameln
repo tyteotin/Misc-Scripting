@@ -1,0 +1,42 @@
+#! /bin/bash
+dir=$1
+if ( [ "$dir" = "" ] ); then
+echo "Enter a dir"
+fi
+RESULT=`ls -a $dir | sort`
+
+declare -a ARRAY
+let count=0
+for FILE in $RESULT
+do
+	if [ -f "$dir/$FILE" ]; then
+		ARRAY[$count]="$dir/$FILE"
+		let count=count+1
+		#echo "$dir/$FILE"
+	fi
+done
+#echo $count
+
+for (( anchor=0; anchor<=count; anchor++ ))
+do
+	for (( files=0; files<=count; files++ ))
+	do
+		if [ $files -gt $anchor ]
+		then
+			aDir=`test -d "${ARRAY[anchor]}"`
+			if [ $? -eq 1 ]
+			then
+				aDirFiles=`test -d "${ARRAY[files]}"`
+				if [ $? -eq "1" ]
+				then
+					duplicate=`cmp -s "${ARRAY[anchor]}" "${ARRAY[files]}"`
+					if [ $? -eq "0" ]
+					then
+						rm "${ARRAY[files]}"
+						ln "${ARRAY[anchor]}" "${ARRAY[files]}"
+					fi
+				fi	
+			fi
+		fi
+	done
+done
